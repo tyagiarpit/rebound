@@ -11,6 +11,7 @@ object MockRepository {
 class MockRepository {
   def findAll(): Map[MockId, Mock] = collection.immutable.Map(MockRepository.storage.toSeq: _*)
   def findById(id: MockId): Option[Mock] = if(MockRepository.storage.contains(id)) Some(MockRepository.storage(id)) else None
+  def findByUriAndMethod(id: MockId): Iterable[Mock] = MockRepository.storage.values.filter(m => m.id.path.equals(id.path) && m.id.method.equals(id.method))
   def save(mock: Mock): Unit = MockRepository.storage.put(mock.id, mock)
   def reset(): Unit = MockRepository.storage.clear()
 }

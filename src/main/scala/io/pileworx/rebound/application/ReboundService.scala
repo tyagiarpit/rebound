@@ -15,6 +15,11 @@ class ReboundService(repository: MockRepository,
   def clear(): Unit = repository.reset()
   def nextResponseById(id: MockId): Option[Response] = repository.findById(id) match {
     case Some(m) => m.nextResponse()
-    case None => None
+    case None => repository.findByUriAndMethod(id)
+      .find(m => (m.id.query.isEmpty || m.id.query.equals(id.query))
+              && (m.id.headers.isEmpty || m.id.headers.get.isEmpty || m.id.headers.equals(id.headers))) match {
+      case Some(m1) => m1.nextResponse()
+      case None => None
+    }
   }
 }
